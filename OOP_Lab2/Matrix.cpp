@@ -80,6 +80,39 @@ Matrix & Matrix::operator - (const Matrix & other)
 		}
 	}
 }
+
+Matrix & Matrix::operator * (const Matrix & other)
+{
+	unsigned int res = 0;
+	if (other.getRow == this->numOfcolumn)
+	{
+		for (int i = 0; i < numOfrow; i++)
+		{
+			for (int j = 0; j < numOfcolumn; j++)
+			{
+				
+				for (int t = 0; t < j; t++)
+				{
+					res+= (pMas + i * numOfcolumn)[j] * other[t][j];
+				}
+
+			}
+		}
+	}
+}
+
+Matrix & Matrix::operator * (const double & num)
+{
+	for (int i = 0; i < numOfrow; i++)
+	{
+		for (int j = 0; j < numOfcolumn; j++)
+		{
+			(pMas + i * numOfcolumn)[j] *= num;
+			//(pMas + i * numOfcolumn)[j] = (pMas + i * numOfcolumn)[j]*num;
+		}
+	}
+}
+
 std::ostream & operator<<(std::ostream & output, const Matrix & matr) // !!!
 {
 	for (size_t row = 0; row < matr.getRow(); ++row)
