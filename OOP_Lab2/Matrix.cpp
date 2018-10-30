@@ -38,6 +38,7 @@ Matrix & Matrix::operator = (const Matrix & other)
 			(pMas + i * numOfcolumn)[j] = other[i][j];
 		}
 	}
+	return *this;
 	
 }
 bool  Matrix::operator == (const Matrix & other) const
@@ -62,29 +63,34 @@ bool  Matrix::operator == (const Matrix & other) const
 
 Matrix & Matrix::operator + (const Matrix & other)
 {
+	Matrix A;
 	for (int i = 0; i<numOfrow; i++)
 	{
 		for (int j = 0; j < numOfcolumn; j++)
 		{
-			(pMas + i * numOfcolumn)[j] += other[i][j];
+			A[i][j] = (pMas + i * numOfcolumn)[j] + other[i][j];
 		}
 	}
+	return A;
 }
 Matrix & Matrix::operator - (const Matrix & other)
 {
+	Matrix A;
 	for (int i = 0; i < numOfrow; i++)
 	{
 		for (int j = 0; j < numOfcolumn; j++)
 		{
-			(pMas + i * numOfcolumn)[j] -= other[i][j];
+			A[i][j]=(pMas + i * numOfcolumn)[j] - other[i][j];
 		}
 	}
+	return A;
 }
 
 Matrix & Matrix::operator * (const Matrix & other)
 {
+	Matrix A;
 	unsigned int res = 0;
-	if (other.getRow == this->numOfcolumn)
+	if (other.getRow() == this->getColumn())
 	{
 		for (int i = 0; i < numOfrow; i++)
 		{
@@ -93,24 +99,44 @@ Matrix & Matrix::operator * (const Matrix & other)
 				
 				for (int t = 0; t < j; t++)
 				{
-					res+= (pMas + i * numOfcolumn)[j] * other[t][j];
+					res+= (pMas + i * numOfcolumn)[t] * other[t][j];
 				}
-
+				A[i][j] = res;
+				res = 0;
 			}
+
 		}
 	}
+	return A;
 }
 
 Matrix & Matrix::operator * (const double & num)
 {
+	Matrix A;
 	for (int i = 0; i < numOfrow; i++)
 	{
 		for (int j = 0; j < numOfcolumn; j++)
 		{
-			(pMas + i * numOfcolumn)[j] *= num;
-			//(pMas + i * numOfcolumn)[j] = (pMas + i * numOfcolumn)[j]*num;
+			A[i][j]=(pMas + i * numOfcolumn)[j] * num;
+			
 		}
 	}
+	return A;
+}
+Matrix & Matrix::operator ~()
+{
+	
+	double temp = 0;
+	for (int i = 0; i < numOfrow; i++)
+	{
+		for (int j = 0; j < numOfcolumn; j++)
+		{
+			temp = (pMas + i * numOfcolumn)[j];
+			(pMas + i * numOfcolumn)[j]= (pMas +j * numOfcolumn)[i];
+			(pMas + j * numOfcolumn)[i] = temp;
+		}
+	}
+	return *this;
 }
 
 std::ostream & operator<<(std::ostream & output, const Matrix & matr) // !!!
