@@ -1,11 +1,12 @@
 #include"Matrix.h"
 #include<iostream>
 #include <string>
+#include <time.h>
+
 void Matrix::size(unsigned int numOfrow, unsigned int numOfcolumn)
 {
 	this->numOfrow = numOfrow;
 	this->numOfcolumn = numOfcolumn;
-	pMas = new double [numOfrow* numOfcolumn];
 }
 Matrix::Matrix()
 {
@@ -13,6 +14,18 @@ Matrix::Matrix()
 	numOfcolumn = 1;
 	pMas= new double[numOfrow* numOfcolumn];
 }
+
+Matrix::Matrix(const unsigned int & numOfrow, const unsigned int & numOfcolumn)
+{
+	size(numOfrow, numOfcolumn);
+	pMas = new double[numOfrow* numOfcolumn];
+}
+
+Matrix::Matrix(const Matrix & other)
+{
+	*this = other;
+}
+
 Matrix::~Matrix()
 {
 	if (pMas != nullptr)
@@ -28,18 +41,20 @@ unsigned int Matrix::getColumn() const
 {
 	return numOfcolumn;
 }
-Matrix & Matrix::operator = (const Matrix & other)
+Matrix Matrix::operator = (const Matrix & other)
 {
+	double temp = 123123;
 	size(other.getRow(),other.getColumn());
+	pMas = new double[numOfrow* numOfcolumn];
 	for(int i=0; i<numOfrow; i++)
 	{
 		for (int j = 0; j < numOfcolumn; j++) 
 		{
+			temp = other[i][j];
 			(pMas + i * numOfcolumn)[j] = other[i][j];
 		}
 	}
 	return *this;
-	
 }
 bool  Matrix::operator == (const Matrix & other) const
 {
@@ -61,9 +76,11 @@ bool  Matrix::operator == (const Matrix & other) const
 		return true;
 }
 
-Matrix & Matrix::operator + (const Matrix & other)
+Matrix Matrix::operator + (Matrix & other)
 {
 	Matrix A;
+	A.size(other.numOfrow,other.numOfcolumn);
+
 	for (int i = 0; i<numOfrow; i++)
 	{
 		for (int j = 0; j < numOfcolumn; j++)
@@ -73,7 +90,7 @@ Matrix & Matrix::operator + (const Matrix & other)
 	}
 	return A;
 }
-Matrix & Matrix::operator - (const Matrix & other)
+Matrix Matrix::operator - (const Matrix & other)
 {
 	Matrix A;
 	for (int i = 0; i < numOfrow; i++)
@@ -86,7 +103,7 @@ Matrix & Matrix::operator - (const Matrix & other)
 	return A;
 }
 
-Matrix & Matrix::operator * (const Matrix & other)
+Matrix Matrix::operator * (const Matrix & other)
 {
 	Matrix A;
 	unsigned int res = 0;
@@ -110,7 +127,7 @@ Matrix & Matrix::operator * (const Matrix & other)
 	return A;
 }
 
-Matrix & Matrix::operator * (const double & num)
+Matrix Matrix::operator * (const double & num)
 {
 	Matrix A;
 	for (int i = 0; i < numOfrow; i++)
@@ -123,7 +140,7 @@ Matrix & Matrix::operator * (const double & num)
 	}
 	return A;
 }
-Matrix & Matrix::operator ~()
+Matrix Matrix::operator ~()
 {
 	
 	double temp = 0;
@@ -163,7 +180,7 @@ std::istream & operator >> (std::istream & input, Matrix & matr)
 		{
 			std::cout << "please input value of x[" << row << "][" << col << "] " << ":";
 			input >> snum;
-			matr[row][col] = std::atol(snum.c_str());
+			matr[row][col] = std::atof(snum.c_str());
 			std::cout << std::endl;
 		}
 	}
@@ -174,4 +191,48 @@ std::istream & operator >> (std::istream & input, Matrix & matr)
 double * Matrix::operator[](const int & row) const
 {
 	return (pMas + row * numOfcolumn);
+}
+
+void Matrix::randomMatrix(Matrix &matr)
+{
+	srand(time(0));
+
+	for (int i = 0; i<numOfrow; i++)
+	{
+		for (int j = 0; j < numOfcolumn; j++)
+		{
+			matr[i][j] = 1 + rand() % 200;
+		}
+	}
+}
+
+void Matrix::simmetricMatrix(Matrix &matr)
+{
+	srand(time(0));
+
+	for (int i = 0; i <numOfrow; i++)
+	{
+		for (int j = 0; j < numOfcolumn; j++)
+		{
+			if (i == j)
+			{
+				matr[i][j] = 1 + rand() % 200;
+			}
+			else
+			{
+				matr[i][j] = matr[j][i] = 1 + rand() % 200;
+			}
+		}
+	}
+}
+
+void Matrix::hilbertMatrix(Matrix &matr)
+{
+	for (int i = 1; i <= numOfrow; i++)
+	{
+		for (int j = 1; j <= numOfcolumn; j++)
+		{
+			matr[i - 1][j - 1] = 1.0 / double(i + j - 1);
+		}
+	}
 }
